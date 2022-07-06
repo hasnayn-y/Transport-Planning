@@ -15,7 +15,8 @@ from matplotlib_scalebar.scalebar import ScaleBar
 import streamlit as st
 import streamlit_folium
 
-st.set_page_config(layout="centered", page_icon= 'house')
+
+st.set_page_config(layout="wide", page_icon= 'house')
 
 c1, c2, c3 = st.columns((1, 1, 1))
 with c2:
@@ -95,13 +96,21 @@ st.markdown(str('**Travel time selected:** '+ str(time))+' minutes')
 
 st.subheader('Catchment Area Map')
 
-map1 = folium.Map(tiles='OpenStreetMap', location= coords_r, zoom_start=13 , title= 'Map',control_scale = True, attr='Nene Valley Transport Planning')
 
+draw = folium.plugins.Draw(export=True)
+minimap = folium.plugins.MiniMap()
+
+
+map1 = folium.Map(tiles='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', 
+        location= coords_r, zoom_start=13 , title= 'Map',control_scale = True, 
+        attr='NVTP | © openrouteservice.org by HeiGIT | Map data © OpenStreetMap contributors')
+#draw.add_to(map1)
+map1.add_child(minimap)
 
 folium.features.GeoJson(iso_car, name= iso_car['metadata']['query']['profile'],
 style_function=lambda feature: {
         'fillColor': 'blue',
-        'color' :'blue' }).add_to(map1) # Add GeoJson to map
+        'color' :'blue' },).add_to(map1) # Add GeoJson to map
 
 folium.features.GeoJson(iso_walk, name= iso_walk['metadata']['query']['profile'],
 style_function=lambda feature: {
@@ -131,10 +140,8 @@ title_html = '''
 
 map1.get_root().html.add_child(folium.Element(title_html))
 
-                    
+
 folium.LayerControl().add_to(map1)
-
-
 streamlit_folium.folium_static(map1,height= 700)
 
 
@@ -152,7 +159,6 @@ for i in iso_walk['features'][0]['geometry']['coordinates'][0]:
 points_bike= []
 for i in iso_bike['features'][0]['geometry']['coordinates'][0]:
     points_bike.append(shapely.geometry.Point(i[0], i[1]))
-
 
 #json to geopandas
 
