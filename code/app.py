@@ -6,15 +6,16 @@ import folium
 
 
 
-
-st.image('logo.png', width = 500)
+c1, c2, c3 = st.columns((0.35, 3, 1))
+with c2:
+        st.image('logo.png', width = 600)
 st.header('Isochrome Mapping')
 
 
 form = st.form(key="annotation")
 with form:
     cols = st.columns((1,1))
-    address = cols[0].text_input('Please enter the address:')
+    address = cols[0].text_input('Please enter the address:', 'london eye')
     time = cols[1].slider("Travel time:", 1, 30, 10)
     submitted = st.form_submit_button(label="Submit")
 
@@ -74,11 +75,10 @@ st.markdown(str('**Travel time selected:** '+ str(time))+' minutes')
 
 
 #Folim plot
+#c1= st.columns((1))
+#c1.title('Catchment Area Map')
 
-c1, c2, c3 = st.beta_columns((1, 3, 1))
-c2.title('Catchment Area Map')
-
-map1 = folium.Map(tiles='OpenStreetMap', location= coords_r, zoom_start=13 , title= 'Map',control_scale = True, attr='Nene Valley Transport Planning', width=1200, height=700)
+map1 = folium.Map(tiles='OpenStreetMap', location= coords_r, zoom_start=13 , title= 'Map',control_scale = True, attr='Nene Valley Transport Planning')
 
 
 folium.features.GeoJson(iso_car, name= iso_car['metadata']['query']['profile'],
@@ -117,5 +117,5 @@ map1.get_root().html.add_child(folium.Element(title_html))
                     
 folium.LayerControl().add_to(map1)
 
-with c2:
-    streamlit_folium.folium_static(map1,width=8000, height=2000)
+#with c1:
+streamlit_folium.folium_static(map1)
